@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NATSI - Subregistros Unificados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS ORIGINAL RECIBIDO --- */
+        :root {
+            --primary: #00D2FF; 
+            --secondary: #9D50BB;
+            --bg-dark: #050505;
+            --text: #ffffff;
+            --success: #00ff9d;
+            --danger: #ff0055;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 15px; 
+            overflow-x: hidden;
+        }
+    
+        .form-card {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(10, 10, 15, 0.98);
+            border: 1px solid var(--secondary);
+            border-top: 3px solid var(--primary);
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        /* --- ESTILOS DEL LOGO NATSI AGREGADO --- */
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px auto;
+            display: block;
+        }
+        svg { width: 100%; height: 100%; overflow: visible; }
+        .cinta {
+            fill: none; stroke-width: 10; stroke-linejoin: round; stroke-linecap: round;
+            stroke-dasharray: 400; animation: flujoInfinito 0s linear infinite;
+        }
+        @keyframes flujoInfinito { from { stroke-dashoffset: 800; } to { stroke-dashoffset: 0; } }
+        .color-cyan { stroke: #00f2fe; }
+        .color-purple { stroke: #9d50bb; }
+        .shadow { stroke: rgba(0,0,0,0.6); stroke-width: 16; filter: blur(4px); }
+
+        h2 { 
+            font-family: 'Orbitron'; 
+            color: var(--primary); 
+            text-align: center; 
+            margin-bottom: 20px; 
+            font-size: 1.1rem; 
+            letter-spacing: 2px;
+        }
+
+        .input-group { 
+            margin-bottom: 12px; 
+        }
+    
+        label { 
+            display: block; 
+            color: var(--secondary); 
+            font-family: 'Share Tech Mono'; 
+            font-size: 0.7rem; 
+            margin-bottom: 4px; 
+        }
+
+        input, select {
+            width: 100%; 
+            background: #000; 
+            border: 1px solid #222; 
+            color: #fff;
+            padding: 12px; 
+            font-family: 'Share Tech Mono'; 
+            outline: none; 
+            font-size: 16px;
+        }
+    
+        input:focus { 
+            border-color: var(--primary); 
+        }
+    
+        .row-group { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+        }
+    
+        .row-group div { 
+            flex: 1; 
+            min-width: 140px; 
+        }
+
+        .email-box { 
+            display: flex; 
+            gap: 5px; 
+            flex-wrap: wrap; 
+        }
+    
+        .email-box input { 
+            flex: 1; 
+            min-width: 120px; 
+        }
+    
+        .email-box select { 
+            flex: 0.8; 
+            min-width: 100px; 
+        }
+
+        .phone-box { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            width: 100%; 
+        }
+    
+        .prefix { 
+            position: absolute; 
+            left: 10px; 
+            color: var(--primary); 
+            font-family: 'Share Tech Mono'; 
+            font-size: 0.9rem; 
+        }
+    
+        .phone-box input { 
+            padding-left: 55px; 
+        }
+
+        .btn-main {
+            width: 100%; 
+            padding: 16px; 
+            background: transparent; 
+            color: var(--primary);
+            border: 2px solid var(--primary); 
+            font-family: 'Orbitron'; 
+            font-weight: bold;
+            cursor: pointer; 
+            margin-top: 10px; 
+            text-transform: uppercase;
+        }
+    
+        #id-card {
+            width: 90vw;
+            max-width: 380px;
+            height: auto;
+            min-height: 220px;
+            background: linear-gradient(135deg, #0a0a0f 0%, #151520 100%);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            position: fixed; 
+            top: 50%; 
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 100; 
+            padding: 20px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 15px;
+            box-shadow: 0 0 50px rgba(0, 210, 255, 0.4);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            visibility: hidden;
+        }
+
+        #id-card.active { 
+            transform: translate(-50%, -50%) scale(1); 
+            visibility: visible; 
+        }
+    
+        .card-body { 
+            display: flex; 
+            gap: 15px; 
+            width: 100%; 
+            align-items: center; 
+        }
+    
+        .id-photo { 
+            width: 80px; 
+            height: 80px; 
+            border: 1px solid var(--secondary); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 2.5rem; 
+            background: #000; 
+            flex-shrink: 0; 
+        }
+    
+        .id-info { 
+            flex-grow: 1; 
+        }
+    
+        .id-info h3 { 
+            font-family: 'Orbitron'; 
+            color: var(--primary); 
+            font-size: 0.9rem; 
+            margin-bottom: 5px; 
+            border-bottom: 1px solid var(--secondary); 
+        }
+    
+        .id-info p { 
+            font-family: 'Share Tech Mono'; 
+            font-size: 0.7rem; 
+            color: #aaa; 
+        }
+
+        .close-id {
+            position: absolute; 
+            top: 10px; 
+            right: 10px;
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%;
+            border: 1px solid var(--danger); 
+            background: rgba(255, 0, 85, 0.1);
+            color: var(--danger); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer;
+        }
+
+        .download-btn { 
+            width: 100%; 
+            text-align: center; 
+            color: var(--success); 
+            border: 1px dashed var(--success); 
+            padding: 8px; 
+            font-size: 0.6rem; 
+            font-family: 'Orbitron'; 
+            margin-top: auto; 
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-card" id="form-ui">
+        <div class="logo-container">
+            <svg viewBox="0 0 100 100">
+                <path class="cinta color-cyan" d="M25,50 Q25,15 50,15 T75,50" />
+                <path class="cinta shadow" d="M50,25 Q85,25 85,50 T50,75 T15,50 T50,25" />
+                <path class="cinta color-purple" d="M50,25 Q85,25 85,50 T50,75 T15,50 T50,25" />
+                <path class="cinta color-cyan" d="M25,50 Q25,85 50,85 T75,50" />
+            </svg>
+        </div>
+
+        <h2>Subregistros NATSI</h2>
+        <form id="reg-form" onsubmit="generateID(event)">
+            
+            <div class="row-group">
+                <div class="input-group">
+                    <label>Primer Nombre</label>
+                    <input type="text" id="fname" required oninput="cleanInput(this)">
+                </div>
+                <div class="input-group">
+                    <label>Primer Apellido</label>
+                    <input type="text" id="lname" required oninput="cleanInput(this)">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Correo Electrónico</label>
+                <div class="email-box">
+                    <input type="text" id="email-user" placeholder="usuario" required oninput="cleanInput(this)">
+                    <select id="email-dom">
+                        <option>@outlook.es</option>
+                        <option>@gmail.com</option>
+                        <option>@agente.gt</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row-group">
+                <div class="input-group">
+                    <label>Núcleo Técnico Títular</label>
+                    <select id="main-list" onchange="updateSubList()">
+                        <option value="">-- SELECCIONAR --</option>
+                        <option value="Productividad">Productividad</option>
+                        <option value="Ecosistema Microsoft">Ecosistema Microsoft</option>
+                        <option value="Desarrollo & loT">Desarrollo & loT</option>
+                        <option value="Lingüística">Lingüística</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Núcleo Técnico por títular</label>
+                    <select id="sub-list" disabled>
+                        <option value="">-- BLOQUEADO --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Número Telefónico</label>
+                <div class="phone-box">
+                    <span class="prefix">+502</span>
+                    <input type="tel" id="phone" placeholder="0000-0000" maxlength="9" required oninput="formatPhone(this)">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-main">Enviar Registro a NATSI</button>
+        </form>
+    </div>
+
+    <div id="id-card">
+        <div class="close-id" onclick="closeID()">✕</div>
+        <div class="card-body">
+            <div class="id-photo">👤</div>
+            <div class="id-info">
+                <h3 id="card-name">---</h3>
+                <p><strong>SN:</strong> <span id="card-id">#0000</span></p>
+                <p><strong>MAIL:</strong> <span id="card-mail">---</span></p>
+                <p><strong>TEL:</strong> <span id="card-phone">---</span></p>
+                <p><strong>NT:</strong> <span id="card-nt1" style="color:var(--primary)">---</span></p>
+                <p><strong>NTT</strong> <span id="card-nt2" style="color:var(--primary)">---</span></p>
+            </div>
+        </div>
+        <div class="download-btn" onclick="downloadID()">DESCARGAR_ID_ENCRYPTED.PNG</div>
+    </div>
+
+    <script>
+        /* --- JS ORIGINAL RECIBIDO --- */
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playBeep(freq, type, duration) {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const dataMap = {
+            "Productividad": ["Excel Profesional", "Bases de Datos con Access", "Gestión Documental (Loop/Forms)", "Comunicación con Outlook"],
+            "Ecosistema Microsoft": ["Power BI Mastery", "Automatización con Power Automate", "Programación con VBA", "Gestión de Proyectos (Project/Visio)"],
+            "Desarrollo & loT": ["Python para Ingeniería", "Sistemas Embebidos con Arduino", "Desarrollo Web PHP/SQL", "Entornos 3D con Unity"],
+            "Lingüística": ["Inglés Técnico", "Ruso Contemporáneo", "Poqomam Ancestral"]
+        };
+
+        function updateSubList() {
+            const main = document.getElementById('main-list');
+            const sub = document.getElementById('sub-list');
+            const val = main.value;
+            sub.innerHTML = "";
+            
+            if (val && dataMap[val]) {
+                sub.disabled = false;
+                dataMap[val].forEach(item => {
+                    let opt = document.createElement('option');
+                    opt.value = item; opt.innerText = item;
+                    sub.appendChild(opt);
+                });
+                playBeep(900, 'sine', 0.1);
+            } else {
+                sub.disabled = true;
+                sub.innerHTML = '<option value="">-- BLOQUEADO --</option>';
+            }
+        }
+
+        function cleanInput(el) {
+            const orig = el.value;
+            el.value = el.value.replace(/[^a-zA-Z0-9]/g, '');
+            if (el.value !== orig) {
+                playBeep(150, 'sawtooth', 0.1);
+            } else if(el.value.length > 0) {
+                playBeep(1200, 'sine', 0.02);
+            }
+        }
+
+        function formatPhone(obj) {
+            let v = obj.value.replace(/\D/g, '');
+            if (v.length > 4) v = v.substring(0, 4) + '-' + v.substring(4, 8);
+            obj.value = v;
+            playBeep(800, 'sine', 0.02);
+        }
+
+        function generateID(e) {
+            e.preventDefault();
+            playBeep(1500, 'square', 0.2);
+
+            document.getElementById('card-name').innerText = document.getElementById('fname').value.toUpperCase() + " " + document.getElementById('lname').value.toUpperCase();
+            document.getElementById('card-mail').innerText = document.getElementById('email-user').value + document.getElementById('email-dom').value;
+            document.getElementById('card-phone').innerText = "+502 " + document.getElementById('phone').value;
+            document.getElementById('card-id').innerText = "#" + Math.floor(Math.random()*9999 + 1000);
+            document.getElementById('card-nt1').innerText = document.getElementById('main-list').value;
+            document.getElementById('card-nt2').innerText = document.getElementById('sub-list').value;
+            
+            document.getElementById('id-card').classList.add('active');
+            document.getElementById('form-ui').style.filter = "blur(15px) brightness(0.2)";
+            document.getElementById('reg-form').reset();
+            updateSubList();
+        }
+
+        function closeID() {
+            playBeep(500, 'sine', 0.1);
+            document.getElementById('id-card').classList.remove('active');
+            document.getElementById('form-ui').style.filter = "none";
+        }
+
+        function downloadID() {
+            playBeep(2000, 'triangle', 0.4);
+            alert("SISTEMA: Exportando datos a PNG...");
+        }
+    </script>
+</body>
+</html>
